@@ -33,6 +33,7 @@ type Config struct {
 	NamecoinRPCCookiePath string `default:"" usage:"Namecoin RPC cookie path (if set, used instead of password)"`
 	NamecoinRPCTimeout    int    `default:"1500" usage:"Timeout (in milliseconds) for Namecoin RPC requests"`
 	CacheMaxEntries       int    `default:"100" usage:"Maximum name cache entries"`
+	OnlyOnion             bool   `default:"false" usage:"Only return onion services?"`
 }
 
 var ncdnsVersion string
@@ -266,7 +267,7 @@ func main() {
 
 			name := words[2]
 			originalName := name
-			onlyOnion := false
+			onlyOnion := cfg.OnlyOnion
 
 			if strings.HasSuffix(name, ".onion") {
 				name = strings.TrimSuffix(name, ".onion")
