@@ -25,23 +25,17 @@ echo ""
 echo "gometalinter critical (should be no warnings):"
 gometalinter.v2 --enable-all \
 --disable=deadcode \
---disable=dupl \
 --disable=errcheck \
---disable=gas \
 --disable=gochecknoglobals \
 --disable=gocyclo \
 --disable=gofmt \
 --disable=golint \
 --disable=gosec \
---disable=ineffassign \
 --disable=lll \
 --disable=maligned \
 --disable=megacheck \
 --disable=nakedret \
---disable=staticcheck \
 --disable=test \
---disable=unconvert \
---disable=unparam \
 --disable=unused \
 --concurrency=3 \
 --deadline=10m \
