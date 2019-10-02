@@ -98,6 +98,7 @@ func createReqMsg(qname string, qtype uint16) *dns.Msg {
 }
 
 type prop279Status int
+
 const StatusSuccess prop279Status = 0
 const StatusGenericFail prop279Status = 1
 const StatusNotInZone prop279Status = 2
@@ -105,9 +106,9 @@ const StatusNxDomain prop279Status = 3
 const StatusTimeout prop279Status = 4
 
 type prop279ResponseWriter struct {
-	queryID int
+	queryID    int
 	parseOnion bool
-	result *prop279Status
+	result     *prop279Status
 }
 
 func (rw *prop279ResponseWriter) LocalAddr() net.Addr {
@@ -135,11 +136,11 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 					onion := answerTXT.Txt[0]
 
 					_, isDomainName := dns.IsDomainName(onion)
-					if ! isDomainName {
+					if !isDomainName {
 						continue
 					}
 
-					if ! strings.HasSuffix(onion, ".onion") {
+					if !strings.HasSuffix(onion, ".onion") {
 						continue
 					}
 
@@ -175,7 +176,7 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 
 				target := answerCNAME.Target
 
-				if ! dns.IsFqdn(target) {
+				if !dns.IsFqdn(target) {
 					continue
 				}
 				target = strings.TrimSuffix(target, ".")
@@ -277,7 +278,7 @@ func main() {
 			result := StatusNxDomain
 
 			if result == StatusNxDomain {
-				result = s.doResolve(queryID, "_tor." + name, dns.TypeTXT, true)
+				result = s.doResolve(queryID, "_tor."+name, dns.TypeTXT, true)
 			}
 
 			if !onlyOnion {
