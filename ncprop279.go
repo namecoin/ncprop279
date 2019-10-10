@@ -242,6 +242,8 @@ func main() {
 	fmt.Println("INIT 1 0")
 
 	for {
+		// Prop279 Sec. 2.9.1 (2016 Oct 04) specifies LF as the line
+		// ending, even on OS's where CRLF is typical.
 		line, err := prop279Reader.ReadString('\n')
 
 		if err != nil {
