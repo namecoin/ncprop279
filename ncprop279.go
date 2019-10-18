@@ -11,7 +11,7 @@ import (
 	"github.com/hlandau/buildinfo"
 	"github.com/miekg/dns"
 	"gopkg.in/hlandau/easyconfig.v1"
-	"gopkg.in/hlandau/madns.v1"
+	"gopkg.in/hlandau/madns.v2"
 
 	"github.com/namecoin/ncdns/backend"
 	"github.com/namecoin/ncdns/namecoin"
@@ -80,7 +80,7 @@ func New(cfg *Config) (s *Server, err error) {
 	return
 }
 
-func createReqMsg(qname string, qtype uint16) *dns.Msg {
+func createReqMsg(qname string, qtype uint16, streamID string) *dns.Msg {
 	m := &dns.Msg{
 		MsgHdr: dns.MsgHdr{
 			Authoritative:     true,
@@ -92,6 +92,20 @@ func createReqMsg(qname string, qtype uint16) *dns.Msg {
 		Question: make([]dns.Question, 1),
 	}
 	m.Question[0] = dns.Question{Name: dns.Fqdn(qname), Qtype: qtype, Qclass: dns.ClassINET}
+
+	// Pass EDNS0 stream isolation to madns, which will pass it onto ncdns
+	o := &dns.OPT{
+		Hdr: dns.RR_Header{
+			Name:   ".",
+			Rrtype: dns.TypeOPT,
+		},
+	}
+	e := new(dns.EDNS0_LOCAL)
+	e.Code = madns.EDNS0STREAMISOLATION
+	e.Data = []byte(streamID)
+	o.Option = append(o.Option, e)
+	m.Extra = append(m.Extra, o)
+
 	m.Id = dns.Id()
 
 	return m
@@ -214,10 +228,10 @@ func (rw *prop279ResponseWriter) TsigTimersOnly(t bool) {
 func (rw *prop279ResponseWriter) Hijack() {
 }
 
-func (s *Server) doResolve(queryID int, qname string, qtype uint16, parseOnion bool) prop279Status {
+func (s *Server) doResolve(queryID int, qname string, qtype uint16, parseOnion bool, streamID string) prop279Status {
 	var result prop279Status
 
-	reqMsg := createReqMsg(qname, qtype)
+	reqMsg := createReqMsg(qname, qtype, streamID)
 	responseWriter := &prop279ResponseWriter{queryID: queryID, parseOnion: parseOnion, result: &result}
 	s.engine.ServeDNS(responseWriter, reqMsg)
 
@@ -277,21 +291,26 @@ func main() {
 				onlyOnion = true
 			}
 
+			streamID := ""
+			if len(words) >= 4 {
+				streamID = words[3]
+			}
+
 			result := StatusNxDomain
 
 			if result == StatusNxDomain {
-				result = s.doResolve(queryID, "_tor."+name, dns.TypeTXT, true)
+				result = s.doResolve(queryID, "_tor."+name, dns.TypeTXT, true, streamID)
 			}
 
 			if !onlyOnion {
 				if result == StatusNxDomain {
-					result = s.doResolve(queryID, name, dns.TypeA, false)
+					result = s.doResolve(queryID, name, dns.TypeA, false, streamID)
 				}
 				if result == StatusNxDomain {
-					result = s.doResolve(queryID, name, dns.TypeAAAA, false)
+					result = s.doResolve(queryID, name, dns.TypeAAAA, false, streamID)
 				}
 				if result == StatusNxDomain {
-					result = s.doResolve(queryID, name, dns.TypeCNAME, false)
+					result = s.doResolve(queryID, name, dns.TypeCNAME, false, streamID)
 				}
 			}
 			if result == StatusNxDomain {
