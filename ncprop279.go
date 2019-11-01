@@ -305,6 +305,9 @@ func main() {
 			if len(words) >= 4 {
 				streamID = words[3]
 			}
+			if streamID == "" {
+				fmt.Fprintf(os.Stderr, "WARNING: Missing stream isolation ID from Prop279 client; stream isolation won't work properly.  Maybe your Prop279 client is outdated?\n")
+			}
 
 			result := StatusNxDomain
 
