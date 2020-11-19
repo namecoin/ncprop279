@@ -10,8 +10,9 @@ go:
 
 notifications:
   irc:
+    if: repo = namecoin/ncprop279
     channels:
-      - "chat.freenode.net#namecoin-dev"
+      - "irc.oftc.net#namecoin-dev"
     on_success: never
 
 sudo: false
