@@ -6,12 +6,22 @@
 
 You need [StemNS](https://github.com/namecoin/StemNS) or [TorNS](https://github.com/meejah/TorNS) in order to use `ncprop279`.  You also need a Nameecoin lookup client such as Namecoin Core, ConsensusJ-Namecoin, or Electrum-NMC.  Your StemNS/TorNS services configuration might look like this:
 
-~~~
+```
 _service_to_command = {
     "bit.onion": ['/path/to/ncprop279'],
     "bit": ['/path/to/ncprop279'],
 }
-~~~
+```
+
+ncprop279 can be configured by arguments on the command line (see `ncprop279 -help`)
+or by the same arguments listed in a configuration file. An example configuration
+file is provided in `ncprop279.conf` in this repository, uncomment and edit any
+desired lines. Note that the `[ncprop279]` section header is required. This configuration
+file will not be used automatically. To specify command line arguments directly
+or give a path to the configuration file, append to the list in the map
+mentioned above:
+
+    "bit.onion": ['/path/to/ncprop279', '-conf=/path/to/ncprop279.conf']
 
 ## Security Notes
 
