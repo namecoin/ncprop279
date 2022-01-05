@@ -1,22 +1,33 @@
 [ncprop279]
+### This is a TOML configuration file. Values must be in quotes where shown.
 
-# Maximum name cache entries
-# cachemaxentries=100
+### namecoind access (Required)
+### ---------------------------
+### You must configure the RPC address, username and password of a trusted
+### (i.e. local) namecoind instance.
 
-# Namecoin RPC server address
-# namecoinrpcaddress="127.0.0.1:8336"
+### The address, in "hostname:port" format, of the Namecoin JSON-RPC interface.
+#namecoinrpcaddress="127.0.0.1:8336"
 
-# Namecoin RPC cookie path (used if password is unspecified)
-# namecoinrpccookiepath=""
+### The username with which to connect to the Namecoin JSON-RPC interface.
+#namecoinrpcusername="user"
 
-# Namecoin RPC password
-# namecoinrpcpassword=""
+### The password with which to connect to the Namecoin JSON-RPC interface.
+#namecoinrpcpassword="password"
 
-# Timeout (in milliseconds) for Namecoin RPC requests
-# namecoinrpctimeout=1500
+### The path to the authentication cookie for the Namecoin JSON-RPC interface.
+#namecoinrpccookiepath="/home/YOURUSERNAME/.namecoin/.cookie"
 
-# Namecoin RPC username
-# namecoinrpcusername=""
+### Timeout (in milliseconds) for Namecoin RPC requests.  May need to be
+### increased if you're using Electrum-NMC with a slow Tor connection.
+#namecoinrpctimeout="10000"
 
-# Only return onion services? (default false)
-# onlyonion=false
+### ncprop279 caches values retrieved from Namecoin. This value limits the
+### number of items ncprop279 may store in its cache. The default value is 100.
+#cachemaxentries="150"
+
+### Disable A/AAAA/CNAME resolution, making .bit behave identically to
+### .bit.onion (i.e. only resolve to onion services).  Default "false" prefers
+### onion services but will fall back to A/AAAA/CNAME resolution for .bit
+### domains.
+#onlyonion="true"
