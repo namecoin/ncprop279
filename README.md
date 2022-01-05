@@ -4,7 +4,7 @@
 
 ## Usage
 
-You need [StemNS](https://github.com/namecoin/StemNS) or [TorNS](https://github.com/meejah/TorNS) in order to use `ncprop279`.  You also need a Nameecoin lookup client such as Namecoin Core, ConsensusJ-Namecoin, or Electrum-NMC.  Your StemNS/TorNS services configuration might look like this:
+You need [StemNS](https://github.com/namecoin/StemNS) or [TorNS](https://github.com/meejah/TorNS) in order to use `ncprop279`.  You also need a Namecoin lookup client such as Namecoin Core, ConsensusJ-Namecoin, or Electrum-NMC.  Your StemNS/TorNS services configuration might look like this:
 
 ```
 _service_to_command = {
@@ -27,8 +27,9 @@ mentioned above:
 
 * `ncprop279` hasn't been carefully checked for proxy leaks.
 * Using `ncprop279` will make you stand out from other Tor users.
-* Stream isolation for streams opened by applications (e.g. Tor Browser) should work fine.  However, stream isolation metadata won't propagate to streams opened by the Namecoin lookup client.  That means you should only use `ncprop279` with a Namecoin name lookup client that will not generate outgoing traffic when you query it, e.g. a full-block-receive Namecoin node such as Namecoin Core or libdohj-namecoin in leveldbtxcache mode.  Electrum-NMC is not a good idea.
-* `ncprop279` probably caches lookups.  This could be used to fingerprint users.
+* Stream isolation for streams opened by applications (e.g. Tor Browser) should work fine.
+* Stream isolation metadata is passed through to the Namecoin lookup client, so any network traffic produced as a result of your lookups (e.g. traffic between Electrum-NMC and ElectrumX) will be stream-isolated.
+* Lookups are cached; the cache is stream-isolated.
 * This whole thing is highly experimental!  Please test it and give feedback, but **don't rely on it behaving correctly**.
 
 ## License
