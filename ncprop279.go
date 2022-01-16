@@ -333,6 +333,7 @@ func main() {
 			}
 		} else if words[0] == "CANCEL" {
 			if len(words) < 2 {
+				fmt.Fprintf(os.Stderr, "Not enough arguments to CANCEL command.\n")
 				continue
 			}
 
