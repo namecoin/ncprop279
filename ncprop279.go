@@ -289,6 +289,7 @@ func main() {
 			queryIDStr := words[1]
 			queryID, err := strconv.Atoi(queryIDStr)
 			if err != nil {
+				fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
 				continue
 			}
 
