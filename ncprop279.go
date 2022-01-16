@@ -151,7 +151,13 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 		*rw.result = StatusNxDomain
 	case dns.RcodeRefused:
 		*rw.result = StatusNotInZone
-		fmt.Printf("RESOLVED %d %d %s\n", rw.queryID, *rw.result, "\"Not in Namecoin zone\"")
+
+		qname := ""
+		if len(res.Question) >= 1 {
+			qname = res.Question[0].Name
+		}
+
+		fmt.Printf("RESOLVED %d %d \"FQDN '%s' not in Namecoin zone\"\n", rw.queryID, *rw.result, qname)
 	case dns.RcodeSuccess:
 		if rw.parseOnion {
 			for _, answer := range res.Answer {
