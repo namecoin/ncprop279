@@ -283,6 +283,7 @@ func main() {
 
 		if words[0] == "RESOLVE" {
 			if len(words) < 3 {
+				fmt.Fprintf(os.Stderr, "Not enough arguments to RESOLVE command.\n")
 				continue
 			}
 
