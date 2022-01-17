@@ -137,11 +137,13 @@ type prop279ResponseWriter struct {
 
 func (rw *prop279ResponseWriter) LocalAddr() net.Addr {
 	addr, _ := net.ResolveIPAddr("ip", "127.0.0.1")
+
 	return addr
 }
 
 func (rw *prop279ResponseWriter) RemoteAddr() net.Addr {
 	addr, _ := net.ResolveIPAddr("ip", "127.0.0.1")
+
 	return addr
 }
 
@@ -169,6 +171,7 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 
 					*rw.result = StatusSuccess
 					fmt.Printf("RESOLVED %d %d %s\n", rw.queryID, *rw.result, onion)
+
 					return nil
 				}
 			}
@@ -178,6 +181,7 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 				if ok {
 					*rw.result = StatusSuccess
 					fmt.Printf("RESOLVED %d %d %s\n", rw.queryID, *rw.result, answerA.A.String())
+
 					return nil
 				}
 			}
@@ -187,6 +191,7 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 				if ok {
 					*rw.result = StatusSuccess
 					fmt.Printf("RESOLVED %d %d %s\n", rw.queryID, *rw.result, answerAAAA.AAAA.String())
+
 					return nil
 				}
 			}
@@ -206,6 +211,7 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 
 				*rw.result = StatusSuccess
 				fmt.Printf("RESOLVED %d %d %s\n", rw.queryID, *rw.result, target)
+
 				return nil
 			}
 		}
@@ -250,6 +256,7 @@ func (s *Server) doResolve(queryID int, qname string, qtype uint16, parseOnion b
 func runResolveCommand(args []string, cfg *Config, s *Server) {
 	if len(args) < 2 {
 		fmt.Fprintf(os.Stderr, "Not enough arguments to RESOLVE command.\n")
+
 		return
 	}
 
@@ -257,6 +264,7 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 	queryID, err := strconv.Atoi(queryIDStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
+
 		return
 	}
 
@@ -306,6 +314,7 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 func runCancelCommand(args []string, cfg *Config, s *Server) {
 	if len(args) < 1 {
 		fmt.Fprintf(os.Stderr, "Not enough arguments to CANCEL command.\n")
+
 		return
 	}
 
@@ -313,6 +322,7 @@ func runCancelCommand(args []string, cfg *Config, s *Server) {
 	queryID, err := strconv.Atoi(queryIDStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
+
 		return
 	}
 
