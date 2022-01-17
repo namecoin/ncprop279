@@ -151,13 +151,6 @@ func (rw *prop279ResponseWriter) WriteMsg(res *dns.Msg) error {
 		*rw.result = StatusNxDomain
 	case dns.RcodeRefused:
 		*rw.result = StatusNotInZone
-
-		qname := ""
-		if len(res.Question) >= 1 {
-			qname = res.Question[0].Name
-		}
-
-		fmt.Printf("RESOLVED %d %d \"FQDN '%s' not in Namecoin zone\"\n", rw.queryID, *rw.result, qname)
 	case dns.RcodeSuccess:
 		if rw.parseOnion {
 			for _, answer := range res.Answer {
@@ -254,75 +247,87 @@ func (s *Server) doResolve(queryID int, qname string, qtype uint16, parseOnion b
 	return result
 }
 
+func runResolveCommand(args []string, cfg *Config, s *Server) {
+	if len(args) < 2 {
+		fmt.Fprintf(os.Stderr, "Not enough arguments to RESOLVE command.\n")
+		return
+	}
+
+	queryIDStr := args[0]
+	queryID, err := strconv.Atoi(queryIDStr)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
+		return
+	}
+
+	name := args[1]
+	originalName := name
+	onlyOnion := cfg.OnlyOnion
+
+	if strings.HasSuffix(name, ".onion") {
+		name = strings.TrimSuffix(name, ".onion")
+		onlyOnion = true
+	}
+
+	streamID := ""
+	if len(args) >= 3 {
+		streamID = args[2]
+	}
+	if streamID == "" {
+		fmt.Fprintf(os.Stderr, "WARNING: Missing stream isolation ID from Prop279 client; stream isolation won't work properly.  Maybe your Prop279 client is outdated?\n")
+	}
+
+	result := StatusNxDomain
+
+	if result == StatusNxDomain {
+		result = s.doResolve(queryID, "_tor."+name, dns.TypeTXT, true, streamID)
+	}
+
+	if !onlyOnion {
+		if result == StatusNxDomain {
+			result = s.doResolve(queryID, name, dns.TypeA, false, streamID)
+		}
+		if result == StatusNxDomain {
+			result = s.doResolve(queryID, name, dns.TypeAAAA, false, streamID)
+		}
+		if result == StatusNxDomain {
+			result = s.doResolve(queryID, name, dns.TypeCNAME, false, streamID)
+		}
+	}
+	if result == StatusNxDomain {
+		fmt.Printf("RESOLVED %d %d \"%s is not registered\"\n", queryID, result, originalName)
+	}
+
+	if result == StatusNotInZone {
+		fmt.Printf("RESOLVED %d %d \"%s is not a Namecoin domain\"\n", queryID, result, originalName)
+	}
+}
+
+func runCancelCommand(args []string, cfg *Config, s *Server) {
+	if len(args) < 1 {
+		fmt.Fprintf(os.Stderr, "Not enough arguments to CANCEL command.\n")
+		return
+	}
+
+	queryIDStr := args[0]
+	queryID, err := strconv.Atoi(queryIDStr)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
+		return
+	}
+
+	fmt.Printf("CANCELED %d\n", queryID)
+}
+
 func runCommand(words []string, cfg *Config, s *Server) {
 	if len(words) < 1 {
 		return
 	}
 
 	if words[0] == "RESOLVE" {
-		if len(words) < 3 {
-			fmt.Fprintf(os.Stderr, "Not enough arguments to RESOLVE command.\n")
-			return
-		}
-
-		queryIDStr := words[1]
-		queryID, err := strconv.Atoi(queryIDStr)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
-			return
-		}
-
-		name := words[2]
-		originalName := name
-		onlyOnion := cfg.OnlyOnion
-
-		if strings.HasSuffix(name, ".onion") {
-			name = strings.TrimSuffix(name, ".onion")
-			onlyOnion = true
-		}
-
-		streamID := ""
-		if len(words) >= 4 {
-			streamID = words[3]
-		}
-		if streamID == "" {
-			fmt.Fprintf(os.Stderr, "WARNING: Missing stream isolation ID from Prop279 client; stream isolation won't work properly.  Maybe your Prop279 client is outdated?\n")
-		}
-
-		result := StatusNxDomain
-
-		if result == StatusNxDomain {
-			result = s.doResolve(queryID, "_tor."+name, dns.TypeTXT, true, streamID)
-		}
-
-		if !onlyOnion {
-			if result == StatusNxDomain {
-				result = s.doResolve(queryID, name, dns.TypeA, false, streamID)
-			}
-			if result == StatusNxDomain {
-				result = s.doResolve(queryID, name, dns.TypeAAAA, false, streamID)
-			}
-			if result == StatusNxDomain {
-				result = s.doResolve(queryID, name, dns.TypeCNAME, false, streamID)
-			}
-		}
-		if result == StatusNxDomain {
-			fmt.Printf("RESOLVED %d %d \"%s is not registered\"\n", queryID, result, originalName)
-		}
+		runResolveCommand(words[1:], cfg, s)
 	} else if words[0] == "CANCEL" {
-		if len(words) < 2 {
-			fmt.Fprintf(os.Stderr, "Not enough arguments to CANCEL command.\n")
-			return
-		}
-
-		queryIDStr := words[1]
-		queryID, err := strconv.Atoi(queryIDStr)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
-			return
-		}
-
-		fmt.Printf("CANCELED %d\n", queryID)
+		runCancelCommand(words[1:], cfg, s)
 	}
 }
 
