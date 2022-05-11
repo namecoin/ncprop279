@@ -261,6 +261,7 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 	}
 
 	queryIDStr := args[0]
+
 	queryID, err := strconv.Atoi(queryIDStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
@@ -281,6 +282,7 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 	if len(args) >= 3 {
 		streamID = args[2]
 	}
+
 	if streamID == "" {
 		fmt.Fprintf(os.Stderr, "WARNING: Missing stream isolation ID from Prop279 client; stream isolation won't work properly.  Maybe your Prop279 client is outdated?\n")
 	}
@@ -295,13 +297,16 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 		if result == StatusNxDomain {
 			result = s.doResolve(queryID, name, dns.TypeA, false, streamID)
 		}
+
 		if result == StatusNxDomain {
 			result = s.doResolve(queryID, name, dns.TypeAAAA, false, streamID)
 		}
+
 		if result == StatusNxDomain {
 			result = s.doResolve(queryID, name, dns.TypeCNAME, false, streamID)
 		}
 	}
+
 	if result == StatusNxDomain {
 		fmt.Printf("RESOLVED %d %d \"%s is not registered\"\n", queryID, result, originalName)
 	}
@@ -319,6 +324,7 @@ func runCancelCommand(args []string, cfg *Config, s *Server) {
 	}
 
 	queryIDStr := args[0]
+
 	queryID, err := strconv.Atoi(queryIDStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
@@ -356,6 +362,7 @@ func main() {
 	}
 
 	prop279Reader = bufio.NewReader(os.Stdin)
+
 	fmt.Println("INIT 1 0")
 
 	for {
