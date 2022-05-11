@@ -39,7 +39,7 @@ type Config struct {
 
 var ncdnsVersion string
 
-func New(cfg *Config) (s *Server, err error) {
+func New(cfg *Config) (*Server, error) {
 	ncdnsVersion = buildinfo.VersionSummary("github.com/namecoin/ncdns", "ncdns")
 
 	// Connect to local namecoin core RPC server using HTTP POST mode.
@@ -59,7 +59,7 @@ func New(cfg *Config) (s *Server, err error) {
 		return nil, err
 	}
 
-	s = &Server{
+	s := &Server{
 		cfg:          *cfg,
 		namecoinConn: client,
 	}
@@ -74,7 +74,7 @@ func New(cfg *Config) (s *Server, err error) {
 		VanityIPs:            []net.IP{},
 	})
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	ecfg := &madns.EngineConfig{
@@ -84,10 +84,10 @@ func New(cfg *Config) (s *Server, err error) {
 
 	s.engine, err = madns.NewEngine(ecfg)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	return
+	return s, nil
 }
 
 func createReqMsg(qname string, qtype uint16, streamID string) *dns.Msg {
