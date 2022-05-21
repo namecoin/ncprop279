@@ -16,6 +16,7 @@ task:
         GO111MODULE: "off"
         GOLANGCI_MODULES_ARGS: "--disable=gomoddirectives,gomodguard"
         MODULES_NAME: " Modules Off"
+      allow_failures: true # TODO: Re-enable this after btcd v0.22.1 is tagged.
       fetch_script:
         - go get -tags "$GOX_TAGS" -d -v -t github.com/$CIRRUS_REPO_FULL_NAME/...
         - GOOS=windows go get -tags "$GOX_TAGS" -d -v -t github.com/$CIRRUS_REPO_FULL_NAME/...
@@ -61,7 +62,7 @@ task:
     - name: "Go Lint $GOOS Mandatory$MODULES_NAME"
       env:
         # TODO: Re-enable varnamelen after golangci-lint v1.44 is released.
-        GOLANGCI_ARGS: "--disable=cyclop,deadcode,errorlint,exhaustivestruct,forbidigo,forcetypeassert,funlen,gci,gocognit,gocritic,godot,godox,goerr113,golint,gosec,gosimple,govet,ineffassign,lll,maligned,nakedret,nestif,nilerr,paralleltest,revive,scopelint,staticcheck,stylecheck,thelper,unconvert,unparam,unused,varnamelen,wastedassign,whitespace,wrapcheck"
+        GOLANGCI_ARGS: "--disable=cyclop,deadcode,errorlint,exhaustivestruct,forbidigo,forcetypeassert,funlen,gci,gocognit,gocritic,godot,godox,goerr113,golint,gosimple,govet,ineffassign,lll,maligned,nakedret,nestif,nilerr,paralleltest,revive,scopelint,staticcheck,stylecheck,thelper,unconvert,unparam,unused,varnamelen,wastedassign,whitespace,wrapcheck"
     - name: "Go Lint $GOOS$MODULES_NAME"
       env:
         GOLANGCI_ARGS: ""
@@ -110,6 +111,7 @@ task:
     - env:
         GO111MODULE: "off"
         MODULES_NAME: " Modules Off"
+      allow_failures: true # TODO: Re-enable this after btcd v0.22.1 is tagged.
       fetch_script:
         - go get -tags "$GOX_TAGS" -d -v -t github.com/$CIRRUS_REPO_FULL_NAME/...
         - GOOS=windows go get -tags "$GOX_TAGS" -d -v -t github.com/$CIRRUS_REPO_FULL_NAME/...
@@ -118,7 +120,6 @@ task:
         - go get -tags "$GOX_TAGS" -d -v -t github.com/$CIRRUS_REPO_FULL_NAME/...
     - env:
         MODULES_NAME: ""
-      allow_failures: true # TODO: Re-enable this after btcd v0.22.1 is tagged.
       certinject_script:
         - cd $(go env GOPATH)/src/github.com/"$CIRRUS_REPO_FULL_NAME"
         - cd ../
@@ -178,6 +179,7 @@ task:
     - env:
         GO111MODULE: "off"
         MODULES_NAME: " Modules Off"
+      allow_failures: true # TODO: Re-enable this after btcd v0.22.1 is tagged.
       gox_script:
         - go get github.com/mitchellh/gox
       fetch_script:
@@ -188,7 +190,6 @@ task:
         - go get -tags "$GOX_TAGS" -d -v -t github.com/$CIRRUS_REPO_FULL_NAME/...
     - env:
         MODULES_NAME: ""
-      allow_failures: true # TODO: Re-enable this after btcd v0.22.1 is tagged.
       certinject_script:
         - cd $(go env GOPATH)/src/github.com/"$CIRRUS_REPO_FULL_NAME"
         - cd ../
