@@ -123,11 +123,13 @@ func createReqMsg(qname string, qtype uint16, streamID string) *dns.Msg {
 
 type prop279Status int
 
-const StatusSuccess prop279Status = 0
-const StatusGenericFail prop279Status = 1
-const StatusNotInZone prop279Status = 2
-const StatusNxDomain prop279Status = 3
-const StatusTimeout prop279Status = 4
+const (
+	StatusSuccess     prop279Status = 0
+	StatusGenericFail prop279Status = 1
+	StatusNotInZone   prop279Status = 2
+	StatusNxDomain    prop279Status = 3
+	StatusTimeout     prop279Status = 4
+)
 
 type prop279ResponseWriter struct {
 	queryID    int
@@ -369,7 +371,6 @@ func main() {
 		// Prop279 Sec. 2.9.1 (2016 Oct 04) specifies LF as the line
 		// ending, even on OS's where CRLF is typical.
 		line, err := prop279Reader.ReadString('\n')
-
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Couldn't read stdin: %s\n", err)
 			os.Exit(3)

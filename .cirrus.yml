@@ -53,7 +53,7 @@ task:
         - go mod tidy
   lint_script:
     - cd $(go env GOPATH)/src/github.com/$CIRRUS_REPO_FULL_NAME/
-    - golangci-lint run --enable-all --disable exhaustruct,gochecknoglobals,gomnd,interfacer $GOLANGCI_ARGS $GOLANGCI_MODULES_ARGS -v --timeout 5m --out-format json > $CIRRUS_WORKING_DIR/lint-report.json
+    - golangci-lint run --enable-all --disable exhaustivestruct,exhaustruct,gochecknoglobals,gomnd,interfacer $GOLANGCI_ARGS $GOLANGCI_MODULES_ARGS -v --timeout 5m --out-format json > $CIRRUS_WORKING_DIR/lint-report.json
   matrix:
     - name: "Go Lint $GOOS New$MODULES_NAME"
       env:
@@ -61,7 +61,7 @@ task:
     - name: "Go Lint $GOOS Mandatory$MODULES_NAME"
       env:
         # TODO: Re-enable varnamelen after golangci-lint v1.44 is released.
-        GOLANGCI_ARGS: "--disable=cyclop,deadcode,errorlint,exhaustivestruct,forbidigo,forcetypeassert,funlen,gci,gocognit,gocritic,godot,godox,goerr113,gofumpt,goimports,golint,gosec,gosimple,govet,ineffassign,lll,maligned,nakedret,nestif,nilerr,paralleltest,revive,scopelint,staticcheck,stylecheck,thelper,unconvert,unparam,unused,varnamelen,wastedassign,whitespace,wrapcheck"
+        GOLANGCI_ARGS: "--disable=cyclop,deadcode,errorlint,exhaustivestruct,forbidigo,forcetypeassert,funlen,gci,gocognit,gocritic,godot,godox,goerr113,goimports,golint,gosec,gosimple,govet,ineffassign,lll,maligned,nakedret,nestif,nilerr,paralleltest,revive,scopelint,staticcheck,stylecheck,thelper,unconvert,unparam,unused,varnamelen,wastedassign,whitespace,wrapcheck"
     - name: "Go Lint $GOOS$MODULES_NAME"
       env:
         GOLANGCI_ARGS: ""
