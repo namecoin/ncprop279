@@ -10,9 +10,10 @@ import (
 
 	"github.com/hlandau/buildinfo"
 	"github.com/miekg/dns"
-	"github.com/namecoin/btcd/rpcclient"
 	"gopkg.in/hlandau/easyconfig.v1"
 	"gopkg.in/hlandau/madns.v2"
+
+	"github.com/namecoin/btcd/rpcclient"
 
 	"github.com/namecoin/ncdns/backend"
 	"github.com/namecoin/ncdns/namecoin"
