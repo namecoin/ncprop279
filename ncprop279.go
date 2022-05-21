@@ -39,7 +39,7 @@ type Config struct {
 
 var ncdnsVersion string
 
-func New(cfg *Config) (s *Server, err error) {
+func New(cfg *Config) (*Server, error) {
 	ncdnsVersion = buildinfo.VersionSummary("github.com/namecoin/ncdns", "ncdns")
 
 	// Connect to local namecoin core RPC server using HTTP POST mode.
@@ -59,7 +59,7 @@ func New(cfg *Config) (s *Server, err error) {
 		return nil, err
 	}
 
-	s = &Server{
+	s := &Server{
 		cfg:          *cfg,
 		namecoinConn: client,
 	}
@@ -74,7 +74,7 @@ func New(cfg *Config) (s *Server, err error) {
 		VanityIPs:            []net.IP{},
 	})
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	ecfg := &madns.EngineConfig{
@@ -84,10 +84,10 @@ func New(cfg *Config) (s *Server, err error) {
 
 	s.engine, err = madns.NewEngine(ecfg)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	return
+	return s, nil
 }
 
 func createReqMsg(qname string, qtype uint16, streamID string) *dns.Msg {
@@ -261,6 +261,7 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 	}
 
 	queryIDStr := args[0]
+
 	queryID, err := strconv.Atoi(queryIDStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
@@ -281,6 +282,7 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 	if len(args) >= 3 {
 		streamID = args[2]
 	}
+
 	if streamID == "" {
 		fmt.Fprintf(os.Stderr, "WARNING: Missing stream isolation ID from Prop279 client; stream isolation won't work properly.  Maybe your Prop279 client is outdated?\n")
 	}
@@ -295,13 +297,16 @@ func runResolveCommand(args []string, cfg *Config, s *Server) {
 		if result == StatusNxDomain {
 			result = s.doResolve(queryID, name, dns.TypeA, false, streamID)
 		}
+
 		if result == StatusNxDomain {
 			result = s.doResolve(queryID, name, dns.TypeAAAA, false, streamID)
 		}
+
 		if result == StatusNxDomain {
 			result = s.doResolve(queryID, name, dns.TypeCNAME, false, streamID)
 		}
 	}
+
 	if result == StatusNxDomain {
 		fmt.Printf("RESOLVED %d %d \"%s is not registered\"\n", queryID, result, originalName)
 	}
@@ -319,6 +324,7 @@ func runCancelCommand(args []string, cfg *Config, s *Server) {
 	}
 
 	queryIDStr := args[0]
+
 	queryID, err := strconv.Atoi(queryIDStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query ID '%s' was not an integer.\n", queryIDStr)
@@ -356,6 +362,7 @@ func main() {
 	}
 
 	prop279Reader = bufio.NewReader(os.Stdin)
+
 	fmt.Println("INIT 1 0")
 
 	for {
