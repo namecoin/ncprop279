@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/hlandau/buildinfo"
+	"github.com/hlandau/xlog"
 	"github.com/miekg/dns"
 	"gopkg.in/hlandau/easyconfig.v1"
 	"gopkg.in/hlandau/madns.v2"
@@ -357,6 +358,21 @@ func main() {
 		ProgramName: "ncprop279",
 	}
 	config.ParseFatal(cfg)
+
+	// Avoid verbose logging that might leak private data
+	// (Copied from dexlogconfig)
+	sev := xlog.SevWarn
+	xlog.Root.SetSeverity(sev)
+
+	err := xlog.VisitSites(func(s xlog.Site) error {
+		s.SetSeverity(sev)
+
+		return nil
+	})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Couldn't set xlog severity: %s\n", err)
+		os.Exit(3)
+	}
 
 	s, err := New(cfg)
 	if err != nil {
