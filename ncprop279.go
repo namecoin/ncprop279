@@ -8,13 +8,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/hlandau/buildinfo"
 	"github.com/hlandau/xlog"
 	"github.com/miekg/dns"
 	"gopkg.in/hlandau/easyconfig.v1"
 	"gopkg.in/hlandau/madns.v2"
-
-	"github.com/namecoin/btcd/rpcclient"
 
 	"github.com/namecoin/ncdns/backend"
 	"github.com/namecoin/ncdns/namecoin"
