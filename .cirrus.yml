@@ -32,6 +32,7 @@ task:
         - git clone https://github.com/namecoin/certinject.git
         - cd certinject
         - go mod init github.com/namecoin/certinject
+        - go mod edit -replace github.com/coreos/go-systemd=github.com/coreos/go-systemd/v22@latest
         - go mod tidy
         - go generate ./...
         - go mod tidy
@@ -127,6 +128,7 @@ task:
         - git clone https://github.com/namecoin/certinject.git
         - cd certinject
         - go mod init github.com/namecoin/certinject
+        - go mod edit -replace github.com/coreos/go-systemd=github.com/coreos/go-systemd/v22@latest
         - go mod tidy
         - go generate ./...
         - go mod tidy
@@ -197,6 +199,7 @@ task:
         - git clone https://github.com/namecoin/certinject.git
         - cd certinject
         - go mod init github.com/namecoin/certinject
+        - go mod edit -replace github.com/coreos/go-systemd=github.com/coreos/go-systemd/v22@latest
         - go mod tidy
         - go generate ./...
         - go mod tidy
