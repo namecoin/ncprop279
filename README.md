@@ -46,7 +46,7 @@ Should work on any platform with Bash; Go 1.15+:
 4. Setup Go modules in the ncprop279 directory:
  
        go mod init github.com/namecoin/ncdns
-       go mod edit -replace github.com/coreos/go-systemd=github.com/coreos/go-systemd/v22@latest -replace github.com/namecoin/certinject=../certinject -replace github.com/namecoin/x509-compressed=../x509-compressed
+       go mod edit -replace github.com/coreos/go-systemd=github.com/coreos/go-systemd/v22@latest -replace github.com/namecoin/certinject=../certinject -replace github.com/namecoin/x509-compressed=../x509-compressed -replace github.com/namecoin/x509-compressed/godebug=../x509-compressed/godebug
        go mod tidy
 
 5. Compile the ncprop279 binary in the ncprop279 directory:
